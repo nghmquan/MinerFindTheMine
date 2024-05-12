@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-
+[RequireComponent(typeof(SpriteRenderer))]
 public class Tile : MonoBehaviour
 {
     [Header("Tile Sprites")]
@@ -20,25 +20,26 @@ public class Tile : MonoBehaviour
     public bool isMine = false;
     public int mineCount = 0;
 
-    private void Awake()
+
+    void Awake()
     {
-        //This should always exist due to RequireComponent helper.
+        // This should always exist due to the RequireComponent helper.
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void OnMouseOver()
     {
-        //If it hasn't already been pressed
+        // If it hasn't already been pressed.
         if (active)
         {
             if (Input.GetMouseButtonDown(0))
             {
-                //If left click reveal the tile contents.
+                // If left click reveal the tile contents.
                 ClickedTile();
             }
             else if (Input.GetMouseButtonDown(1))
             {
-                //If right click toggle flag on/off.
+                // If right click toggle flag on/off.
                 flagged = !flagged;
                 if (flagged)
                 {
@@ -49,64 +50,66 @@ public class Tile : MonoBehaviour
                     spriteRenderer.sprite = unclickedTile;
                 }
             }
-            else
+        }
+        else
+        {
+            // If you're pressing both mouse buttons.
+            if (Input.GetMouseButton(0) && Input.GetMouseButton(1))
             {
-                //If you're pressing both mouse buttons.
-                if (Input.GetMouseButton(0))
-                {
-                    //Check for valid expansion.
-                    gameManager.ExpandIfFlagged(this);
-                }
+                // Check for valid expansion.
+                gameManager.ExpandIfFlagged(this);
             }
         }
     }
 
     public void ClickedTile()
     {
-        //Don't allow left clicks on flags/
-        if(active & !flagged)
+        // Don't allow left clicks on flags.
+        if (active & !flagged)
         {
-            //Ensure it can no longer be pressed again.
+            // Ensure it can no longer be pressed again.
             active = false;
-            if(isMine)
+            if (isMine)
             {
-                //Game over
+                // Game over :(
                 spriteRenderer.sprite = mineHitTile;
                 gameManager.GameOver();
             }
             else
             {
-                //It was a safe click, set the correct sprite.
+                // It was a safe click, set the correct sprite.
                 spriteRenderer.sprite = clickedTiles[mineCount];
-                if(mineCount == 0)
+                if (mineCount == 0)
                 {
-                    //Register that the click should expand out to the neighbours.
+                    // Register that the click should expand out to the neighbours.
                     gameManager.ClickNeighbours(this);
                 }
-                //When we successfully make a change check for game over.
+                // Whenever we successfully make a change check for game over.
                 gameManager.CheckGameOver();
             }
         }
     }
 
+    // If this tile should be shown at game over, do so.
     public void ShowGameOverState()
     {
         if (active)
         {
             active = false;
-            if(isMine & !flagged)
+            if (isMine & !flagged)
             {
-                //If mine and not flagged show mine.
+                // If mine and not flagged show mine.
                 spriteRenderer.sprite = mineTile;
-            }else if(flagged & !isMine)
+            }
+            else if (flagged & !isMine)
             {
-                //If flagged incorrectly show crossthrough mine
+                // If flagged incorrectly show crossthrough mine
                 spriteRenderer.sprite = mineWrongTile;
             }
         }
     }
 
-    //Helper function to flag remaning mines on game completion.
+    // Helper function to flag remaning mines on game completion.
     public void SetFlaggedIfMine()
     {
         if (isMine)
@@ -115,4 +118,5 @@ public class Tile : MonoBehaviour
             spriteRenderer.sprite = flaggedTile;
         }
     }
+
 }
