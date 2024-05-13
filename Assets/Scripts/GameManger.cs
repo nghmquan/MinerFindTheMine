@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -18,9 +19,6 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        CreateGameBoard(9, 9, 10); // Easy
-                                   // CreateGameBoard(16, 16, 40); // Intermediate
-                                   // CreateGameBoard(30, 16, 99); // Expert
         ResetGameState();
     }
 
@@ -185,4 +183,5 @@ public class GameManager : MonoBehaviour
             ClickNeighbours(tile);
         }
     }
+
 }
