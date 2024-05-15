@@ -10,9 +10,7 @@ public class Tile : MonoBehaviour
     [SerializeField] private Sprite mineTile;
     [SerializeField] private Sprite mineWrongTile;
     [SerializeField] private Sprite mineHitTile;
-
-    [Header("GM set via code")]
-    public GameManager gameManager;
+   
 
     private SpriteRenderer spriteRenderer;
     public bool flagged = false;
@@ -57,7 +55,7 @@ public class Tile : MonoBehaviour
             if (Input.GetMouseButton(0) && Input.GetMouseButton(1))
             {
                 // Check for valid expansion.
-                gameManager.ExpandIfFlagged(this);
+                GameManager.Instance.ExpandIfFlagged(this);
             }
         }
     }
@@ -73,7 +71,7 @@ public class Tile : MonoBehaviour
             {
                 // Game over :(
                 spriteRenderer.sprite = mineHitTile;
-                gameManager.GameOver();
+                GameManager.Instance.GameOver();
             }
             else
             {
@@ -82,10 +80,10 @@ public class Tile : MonoBehaviour
                 if (mineCount == 0)
                 {
                     // Register that the click should expand out to the neighbours.
-                    gameManager.ClickNeighbours(this);
+                    GameManager.Instance.ClickNeighbours(this);
                 }
                 // Whenever we successfully make a change check for game over.
-                gameManager.CheckGameOver();
+                GameManager.Instance.CheckGameOver();
             }
         }
     }

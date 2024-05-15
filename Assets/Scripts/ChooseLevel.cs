@@ -1,31 +1,36 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Properties;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 public class ChooseLevel : MonoBehaviour
-{
-    public GameManager gameManager;
-
-    void Start()
-    {
-        gameManager = FindObjectOfType<GameManager>(); // Tìm GameManager trong scene và gán vào gameManager
-    }
+{   
 
     public void StartEasyLevel()
     {
-        SceneManager.LoadScene(2);
-        gameManager.CreateGameBoard(10, 10, 10);
+        // GameManager.Instance.CreateGameBoard(10, 10, 10);
+        GameManager.Instance.SetCurrentDifficulty(GameDifficulty.EASY);
+        ScenceLoader.Instance.ChangeScence(ScenceName.GAME_PLAY);
     }
 
     public void StartMediumLevel()
     {
-        SceneManager.LoadScene(3);
-        gameManager.CreateGameBoard(18, 18, 40);
+        // gameManager.CreateGameBoard(18, 18, 40);
+        GameManager.Instance.SetCurrentDifficulty(GameDifficulty.MEDIUM);
+        ScenceLoader.Instance.ChangeScence(ScenceName.GAME_PLAY);
     }
 
     public void StartHardLevel()
     {
-        SceneManager.LoadScene(4);
-        gameManager.CreateGameBoard(24, 24, 99);
+        // gameManager.CreateGameBoard(24, 24, 99);
+        GameManager.Instance.SetCurrentDifficulty(GameDifficulty.HARD);
+        ScenceLoader.Instance.ChangeScence(ScenceName.GAME_PLAY);
     }
+}
+
+public enum GameDifficulty
+{
+    EASY =0,
+    MEDIUM =1,
+    HARD =2,
 }

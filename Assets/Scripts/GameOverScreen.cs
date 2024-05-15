@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MainMenu : MonoBehaviour
+public class GameOverScreen : Singleton<GameOverScreen>
 {
+    [SerializeField] GameObject gameoverPanel;
 
-    public void QuitGame()
+    public void SetUp()
     {
-        Application.Quit();
+        gameoverPanel.SetActive(true);
     }
 
-    public void OnClickPlayGame()
+    public void RestartButton()
     {
         ScenceLoader.Instance.ChangeScence(ScenceName.CHOOSE_LEVEL);
     }

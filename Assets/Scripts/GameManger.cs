@@ -2,11 +2,10 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
-public class GameManager : MonoBehaviour
+public class GameManager : Singleton<GameManager>
 {
+    [SerializeField] private GameDifficulty currentDifficulty;
     [SerializeField] private Transform tilePrefab;
-    [SerializeField] private Transform gameHolder;
 
     private List<Tile> tiles = new();
 
@@ -19,15 +18,46 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+       
+    }
+
+    public void Initialized(Transform tileHolder)
+    {
+        tiles.Clear();
+        CreateGameBoard(tileHolder);
         ResetGameState();
     }
 
-    public void CreateGameBoard(int width, int height, int numMines)
+    public void SetCurrentDifficulty(GameDifficulty diff)
     {
-        // Save the game parameters we're using.
-        this.width = width;
-        this.height = height;
-        this.numMines = numMines;
+        currentDifficulty = diff;
+        switch (currentDifficulty)
+        {
+            case GameDifficulty.EASY:
+                width = 10;
+                height = 10;
+                numMines = 10;
+                break;
+            case GameDifficulty.MEDIUM:
+                width = 18;
+                height = 18;
+                numMines = 40;
+                break;
+            case GameDifficulty.HARD:
+                width = 24;
+                height = 24;
+                numMines = 99;
+                break;
+        }
+    }
+
+    public GameDifficulty CurrentDifficulty()
+    {
+        return currentDifficulty;
+    }
+
+    public void CreateGameBoard(Transform tileHolder)
+    {        
 
         // Create the array of tiles.
         for (int row = 0; row < height; row++)
@@ -36,14 +66,13 @@ public class GameManager : MonoBehaviour
             {
                 // Position the tile in the correct place (centred).
                 Transform tileTransform = Instantiate(tilePrefab);
-                tileTransform.parent = gameHolder;
+                tileTransform.parent = tileHolder;
                 float xIndex = col - ((width - 1) / 2.0f);
                 float yIndex = row - ((height - 1) / 2.0f);
                 tileTransform.localPosition = new Vector2(xIndex * tileSize, yIndex * tileSize);
                 // Keep a reference to the tile for setting up the game.
                 Tile tile = tileTransform.GetComponent<Tile>();
                 tiles.Add(tile);
-                tile.gameManager = this;
             }
         }
     }
@@ -138,6 +167,8 @@ public class GameManager : MonoBehaviour
         {
             tile.ShowGameOverState();
         }
+
+        GameOverScreen.Instance.SetUp();
     }
 
     public void CheckGameOver()
@@ -183,5 +214,4 @@ public class GameManager : MonoBehaviour
             ClickNeighbours(tile);
         }
     }
-
 }
