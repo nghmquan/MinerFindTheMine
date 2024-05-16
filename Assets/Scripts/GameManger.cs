@@ -5,48 +5,23 @@ using UnityEngine.SceneManagement;
 public class GameManager : Singleton<GameManager>
 {
     [SerializeField] private GameDifficulty currentDifficulty;
-    [SerializeField] private Transform tilePrefab;
 
-    private List<Tile> tiles = new();
-
-    private int width;
-    private int height;
-    private int numMines;
-
-    private readonly float tileSize = 0.5f;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-       
-    }
-
-    public void Initialized(Transform tileHolder)
-    {
-        tiles.Clear();
-        CreateGameBoard(tileHolder);
-        ResetGameState();
-    }
+    private BoardData _boardData;
 
     public void SetCurrentDifficulty(GameDifficulty diff)
     {
         currentDifficulty = diff;
+        _boardData = new BoardData();
         switch (currentDifficulty)
         {
             case GameDifficulty.EASY:
-                width = 10;
-                height = 10;
-                numMines = 10;
+                SetBoardData(10, 10, 10);
                 break;
             case GameDifficulty.MEDIUM:
-                width = 18;
-                height = 18;
-                numMines = 40;
+                SetBoardData(18 , 18, 40);
                 break;
             case GameDifficulty.HARD:
-                width = 24;
-                height = 24;
-                numMines = 99;
+                SetBoardData(24, 24, 99);
                 break;
         }
     }
@@ -56,162 +31,31 @@ public class GameManager : Singleton<GameManager>
         return currentDifficulty;
     }
 
-    public void CreateGameBoard(Transform tileHolder)
-    {        
+    public BoardData GetBoardData => _boardData;
 
-        // Create the array of tiles.
-        for (int row = 0; row < height; row++)
-        {
-            for (int col = 0; col < width; col++)
-            {
-                // Position the tile in the correct place (centred).
-                Transform tileTransform = Instantiate(tilePrefab);
-                tileTransform.parent = tileHolder;
-                float xIndex = col - ((width - 1) / 2.0f);
-                float yIndex = row - ((height - 1) / 2.0f);
-                tileTransform.localPosition = new Vector2(xIndex * tileSize, yIndex * tileSize);
-                // Keep a reference to the tile for setting up the game.
-                Tile tile = tileTransform.GetComponent<Tile>();
-                tiles.Add(tile);
-            }
-        }
-    }
-    private void ResetGameState()
+   
+   
+    void SetBoardData(int width, int height, int nunMines)
     {
-        // Randomly shuffle the tile positions to get indices for mine positions.
-        int[] minePositions = Enumerable.Range(0, tiles.Count).OrderBy(x => Random.Range(0.0f, 1.0f)).ToArray();
-
-        // Set mines at the first numMines positions.
-        for (int i = 0; i < numMines; i++)
-        {
-            int pos = minePositions[i];
-            tiles[pos].isMine = true;
-        }
-
-        // Update all the tiles to hold the correct number of mines.
-        for (int i = 0; i < tiles.Count; i++)
-        {
-            tiles[i].mineCount = HowManyMines(i);
-        }
-    }
-
-    // Given a location work out how many mines are surrounding it.
-    private int HowManyMines(int location)
+        _boardData.width = width;
+        _boardData.height = height;
+        _boardData.numMines = nunMines;
+    }  
+   
+    public void ShowWinGame()
     {
-        int count = 0;
-        foreach (int pos in GetNeighbours(location))
-        {
-            if (tiles[pos].isMine)
-            {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    // Given a position, return the positions of all neighbours.
-    private List<int> GetNeighbours(int pos)
-    {
-        List<int> neighbours = new();
-        int row = pos / width;
-        int col = pos % width;
-        // (0,0) is bottom left.
-        if (row < (height - 1))
-        {
-            neighbours.Add(pos + width); // North
-            if (col > 0)
-            {
-                neighbours.Add(pos + width - 1); // North-West
-            }
-            if (col < (width - 1))
-            {
-                neighbours.Add(pos + width + 1); // North-East
-            }
-        }
-        if (col > 0)
-        {
-            neighbours.Add(pos - 1); // West
-        }
-        if (col < (width - 1))
-        {
-            neighbours.Add(pos + 1); // East
-        }
-        if (row > 0)
-        {
-            neighbours.Add(pos - width); // South
-            if (col > 0)
-            {
-                neighbours.Add(pos - width - 1); // South-West
-            }
-            if (col < (width - 1))
-            {
-                neighbours.Add(pos - width + 1); // South-East
-            }
-        }
-        return neighbours;
-    }
-
-    public void ClickNeighbours(Tile tile)
-    {
-        int location = tiles.IndexOf(tile);
-        foreach (int pos in GetNeighbours(location))
-        {
-            tiles[pos].ClickedTile();
-        }
-    }
-
-    public void GameOver()
-    {
-        // Disable clicks on all mines.
-        foreach (Tile tile in tiles)
-        {
-            tile.ShowGameOverState();
-        }
-
         GameOverScreen.Instance.SetUp();
     }
 
-    public void CheckGameOver()
+    public void ShowLoseGame()
     {
-        // If there are numMines left active then we're done.
-        int count = 0;
-        foreach (Tile tile in tiles)
-        {
-            if (tile.active)
-            {
-                count++;
-            }
-        }
-        if (count == numMines)
-        {
-            // Flag and disable everything, we're done.
-            Debug.Log("Winner!");
-            foreach (Tile tile in tiles)
-            {
-                tile.active = false;
-                tile.SetFlaggedIfMine();
-            }
-        }
+        GameOverScreen.Instance.SetUp();
     }
+}
 
-    // Click on all surrounding tiles if mines are all flagged.
-    public void ExpandIfFlagged(Tile tile)
-    {
-        int location = tiles.IndexOf(tile);
-        // Get the number of flags.
-        int flag_count = 0;
-        foreach (int pos in GetNeighbours(location))
-        {
-            if (tiles[pos].flagged)
-            {
-                flag_count++;
-            }
-        }
-        // If we have the right number click surrounding tiles.
-        if (flag_count == tile.mineCount)
-        {
-            // Clicking a flag does nothing so this is safe.
-            ClickNeighbours(tile);
-        }
-    }
+public struct BoardData
+{
+    public int width;
+    public int height;
+    public int numMines;
 }

@@ -26,9 +26,7 @@ public class ScenceLoader : Singleton<ScenceLoader>
             return;
         }
         SceneManager.LoadScene(sceneNameStr);
-    }
-
-    
+    }     
 }
 
 public enum ScenceName

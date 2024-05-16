@@ -5,10 +5,15 @@ using UnityEngine;
 public class Gameplay : MonoBehaviour
 {
     // Start is called before the first frame update
-    [SerializeField] private Transform tileHolder;
+    
     void Start()
     {
         CameraController.Instance.CameraChange();
-        GameManager.Instance.Initialized(tileHolder);
-    }  
+        BoardController.Instance.Initialized();
+    }
+    
+    public void ResetScene()
+    {
+        ScenceLoader.Instance.ChangeScence(ScenceName.GAME_PLAY);
+    }
 }

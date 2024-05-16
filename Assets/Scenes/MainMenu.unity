@@ -199,7 +199,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dontDestroyOverload: 1
   currentDifficulty: 0
-  tilePrefab: {fileID: 3676897500279725748, guid: 24051dc2aad53b445925dfd6745eb982, type: 3}
 --- !u!4 &178499138
 Transform:
   m_ObjectHideFlags: 0

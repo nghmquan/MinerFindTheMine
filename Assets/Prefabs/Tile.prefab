@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 6280105829827719380}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.7165852, y: -0.25451213, z: 0.085061714}
+  m_LocalPosition: {x: 1.716585, y: -0.2545121, z: 0.08506171}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -98,6 +98,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c6f1b5cbc412e74abeca48d53e02c10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dontDestroyOverload: 0
   unclickedTile: {fileID: 21300000, guid: 7975c8fe8af505b4fab38239261690da, type: 3}
   flaggedTile: {fileID: 21300000, guid: 32f10d082dd045a489acb7ea4f328601, type: 3}
   clickedTiles:
@@ -113,7 +114,6 @@ MonoBehaviour:
   mineTile: {fileID: 21300000, guid: 0563590b99aa1ac498bea610828de196, type: 3}
   mineWrongTile: {fileID: 21300000, guid: d43df533a328c944ba365d8f2579963e, type: 3}
   mineHitTile: {fileID: 21300000, guid: 42ce4550e6b0175418e37d0b7b16ca66, type: 3}
-  gameManager: {fileID: 0}
   flagged: 0
   active: 1
   isMine: 0

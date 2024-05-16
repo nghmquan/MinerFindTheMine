@@ -3,28 +3,37 @@ using System.Collections.Generic;
 using Unity.Properties;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 public class ChooseLevel : MonoBehaviour
-{   
+{
+    [SerializeField] private Button btnEasy, btnMedium, btnHard;
+
+    private void Start()
+    {
+        btnEasy.onClick.AddListener(StartEasyLevel);
+        btnMedium.onClick.AddListener(StartMediumLevel);
+        btnHard.onClick.AddListener(StartHardLevel);
+    }
+
+    private void StartLevel(GameDifficulty difficulty)
+    {
+        GameManager.Instance.SetCurrentDifficulty(difficulty);
+        ScenceLoader.Instance.ChangeScence(ScenceName.GAME_PLAY);
+    }
 
     public void StartEasyLevel()
     {
-        // GameManager.Instance.CreateGameBoard(10, 10, 10);
-        GameManager.Instance.SetCurrentDifficulty(GameDifficulty.EASY);
-        ScenceLoader.Instance.ChangeScence(ScenceName.GAME_PLAY);
+        StartLevel(GameDifficulty.EASY);
     }
 
     public void StartMediumLevel()
     {
-        // gameManager.CreateGameBoard(18, 18, 40);
-        GameManager.Instance.SetCurrentDifficulty(GameDifficulty.MEDIUM);
-        ScenceLoader.Instance.ChangeScence(ScenceName.GAME_PLAY);
+        StartLevel(GameDifficulty.MEDIUM);
     }
 
     public void StartHardLevel()
     {
-        // gameManager.CreateGameBoard(24, 24, 99);
-        GameManager.Instance.SetCurrentDifficulty(GameDifficulty.HARD);
-        ScenceLoader.Instance.ChangeScence(ScenceName.GAME_PLAY);
+        StartLevel(GameDifficulty.HARD);
     }
 }
 

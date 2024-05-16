@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer))]
-public class Tile : MonoBehaviour
+public class Tile : Singleton<Tile>
 {
     [Header("Tile Sprites")]
     [SerializeField] private Sprite unclickedTile;
@@ -55,7 +55,7 @@ public class Tile : MonoBehaviour
             if (Input.GetMouseButton(0) && Input.GetMouseButton(1))
             {
                 // Check for valid expansion.
-                GameManager.Instance.ExpandIfFlagged(this);
+                BoardController.Instance.ExpandIfFlagged(this);
             }
         }
     }
@@ -69,21 +69,29 @@ public class Tile : MonoBehaviour
             active = false;
             if (isMine)
             {
+                if (BoardController.Instance.IsFirstClick)
+                {
+                    Debug.Log("Hit Mines First Click");
+                    BoardController.Instance.ResetBoardIfFirstClickBomb();
+                    return;
+                }
                 // Game over :(
                 spriteRenderer.sprite = mineHitTile;
-                GameManager.Instance.GameOver();
+                BoardController.Instance.LoseGame();
             }
             else
             {
                 // It was a safe click, set the correct sprite.
+
+                BoardController.Instance.IsFirstClick = false;
                 spriteRenderer.sprite = clickedTiles[mineCount];
                 if (mineCount == 0)
                 {
                     // Register that the click should expand out to the neighbours.
-                    GameManager.Instance.ClickNeighbours(this);
+                    BoardController.Instance.ClickNeighbours(this);
                 }
                 // Whenever we successfully make a change check for game over.
-                GameManager.Instance.CheckGameOver();
+                BoardController.Instance.WinGame();
             }
         }
     }

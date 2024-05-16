@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraController : Singleton<CameraController>
 {
-    [SerializeField] Camera camera;
+    [SerializeField] Camera cameraController;
 
     [Range(1, 15)]
     [SerializeField] private float sizeEasy, sizeMedium, sizeHard;
@@ -16,13 +16,13 @@ public class CameraController : Singleton<CameraController>
         switch (gameDifficulty)
         {
             case GameDifficulty.EASY:
-                camera.orthographicSize = sizeEasy;
+                cameraController.orthographicSize = sizeEasy;
                 break;
             case GameDifficulty.MEDIUM:
-                camera.orthographicSize = sizeMedium;
+                cameraController.orthographicSize = sizeMedium;
                 break;
             case GameDifficulty.HARD:
-                camera.orthographicSize = sizeHard;
+                cameraController.orthographicSize = sizeHard;
                 break;
         }
         
